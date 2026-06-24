@@ -2,7 +2,12 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
   content: [
-    "./_site/**/*.html"
+    "./*.html",
+    "./_drafts/**/*.md",
+    "./_includes/**/*.html",
+    "./_layouts/**/*.html",
+    "./_posts/**/*.md",
+    "./_data/**/*.yml"
   ],
   theme: {
     colors: {
