@@ -1192,6 +1192,32 @@ main {
     padding-top: 2.5rem;
   }
 
+  .post-header h1 {
+    font-size: 1.82rem;
+    line-height: 1.04;
+    max-width: calc(100vw - 2rem);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .post-dek,
+  .prose {
+    font-size: 1rem;
+    max-width: calc(100vw - 2rem);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .prose :where(p, li, h2, h3) {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .post-content :where(code):not(pre code) {
+    white-space: normal;
+  }
+
   .author-profile {
     padding-top: 2.25rem;
   }
