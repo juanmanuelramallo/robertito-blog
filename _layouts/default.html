@@ -1,0 +1,17 @@
+---
+layout: compress
+---
+
+<!DOCTYPE html>
+<html lang="en" >
+  {% include head.html %}
+  <body class="min-h-screen flex flex-col justify-between transition-all ease-in-out delay-200{% if page.url == "/" %} home-page{% endif %}">
+    <main role="main" class="">
+      {% include navigation.html %}
+      <div class="site-shell">
+        {{ content }}
+      </div>
+    </main>
+    {% include footer.html %}
+  </body>
+</html>

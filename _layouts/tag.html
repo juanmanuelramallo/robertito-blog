@@ -1,0 +1,15 @@
+---
+layout: default
+---
+
+{% assign posts = site.tags[page.tag] %}
+{% assign taxonomy_item = site.data.taxonomy.tags | where: "slug", page.tag | first %}
+{% assign tag_label = taxonomy_item.label | default: page.tag %}
+{% if taxonomy_item.description %}
+  <section class="tag-intro" aria-labelledby="tag-title">
+    <p class="home-kicker">Topic</p>
+    <h1 id="tag-title">#{{ tag_label }}</h1>
+    <p>{{ taxonomy_item.description }}</p>
+  </section>
+{% endif %}
+{% include posts.html posts=posts %}

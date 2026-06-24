@@ -1,0 +1,149 @@
+---
+layout: default
+---
+
+<section class="post-page" id="post">
+  <header class="post-header">
+    {% assign primary_tag = page.tags[0] %}
+    {% assign primary_taxonomy = site.data.taxonomy.tags | where: "slug", primary_tag | first %}
+    {% assign primary_label = primary_taxonomy.label | default: primary_tag %}
+    <nav class="post-breadcrumb" aria-label="Breadcrumb">
+      <a href="{{ site.baseurl }}/">Articles</a>
+      {% if primary_tag %}
+        <span aria-hidden="true">/</span>
+        <a href="{{ site.baseurl }}/tag/{{ primary_tag | slugify }}/">{{ primary_label }}</a>
+      {% endif %}
+    </nav>
+
+    <p class="post-meta">
+      {% include time.html date=page.date %}
+      &middot;
+      {% include read_time.html read_time=page.read_time_in_minutes %}
+      {% if page.author %}
+      &middot;
+      {% include author.html author=page.author %}
+      {% endif %}
+    </p>
+
+    <h1>{{ page.title }}</h1>
+
+    {% assign post_excerpt = page.excerpt | strip_html | strip %}
+    {% if post_excerpt != "" %}
+      <p class="post-dek">{{ post_excerpt }}</p>
+    {% endif %}
+
+  </header>
+
+  <div class="post-reading-layout">
+    <div>
+      <div class="post-content prose">
+        {{ content }}
+      </div>
+
+      <div class="post-tags">
+        {% for tag in page.tags %}
+        <p>
+          {% include tag.html tag=tag %}
+        </p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <aside class="post-toc" aria-labelledby="post-toc-title" hidden>
+      <h2 id="post-toc-title">On this page</h2>
+      <ol></ol>
+    </aside>
+  </div>
+
+  {% if page.previous or page.next %}
+    <nav class="post-nav" aria-label="Post navigation">
+      {% if page.previous %}
+        <a class="post-nav-item" href="{{ site.baseurl }}{{ page.previous.url }}">
+          <span>Previous</span>
+          <strong>{{ page.previous.title }}</strong>
+        </a>
+      {% endif %}
+      {% if page.next %}
+        <a class="post-nav-item" href="{{ site.baseurl }}{{ page.next.url }}">
+          <span>Next</span>
+          <strong>{{ page.next.title }}</strong>
+        </a>
+      {% endif %}
+    </nav>
+  {% endif %}
+
+  {% assign related_count = 0 %}
+  {% capture related_items %}
+    {% for post in site.posts %}
+      {% unless post.url == page.url %}
+        {% assign has_related_tag = false %}
+        {% for tag in page.tags %}
+          {% if post.tags contains tag %}
+            {% assign has_related_tag = true %}
+          {% endif %}
+        {% endfor %}
+        {% if has_related_tag and related_count < 3 %}
+          {% assign related_count = related_count | plus: 1 %}
+          <li>
+            <a href="{{ site.baseurl }}{{ post.url }}">
+              <span>
+                {% include time.html date=post.date %}
+                {% if post.tags[0] %}
+                  &middot; #{{ post.tags[0] }}
+                {% endif %}
+              </span>
+              <strong>{{ post.title }}</strong>
+            </a>
+          </li>
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+  {% endcapture %}
+
+  {% if related_count > 0 %}
+    <section class="related-posts" aria-labelledby="related-posts-title">
+      <h2 id="related-posts-title">Related posts</h2>
+      <ul>
+        {{ related_items }}
+      </ul>
+    </section>
+  {% endif %}
+</section>
+
+<script>
+  (function () {
+    var content = document.querySelector('.post-content');
+    var toc = document.querySelector('.post-toc');
+    if (!content) return;
+
+    var headings = Array.prototype.slice.call(content.querySelectorAll('h2[id], h3[id]'));
+
+    headings.forEach(function (heading) {
+      if (heading.querySelector('.heading-anchor')) return;
+
+      var anchor = document.createElement('a');
+      anchor.className = 'heading-anchor';
+      anchor.href = '#' + heading.id;
+      anchor.setAttribute('aria-label', 'Link to ' + heading.textContent);
+      anchor.textContent = '#';
+      heading.appendChild(anchor);
+    });
+
+    if (!toc || headings.length < 2) return;
+
+    var list = toc.querySelector('ol');
+    headings.forEach(function (heading) {
+      var item = document.createElement('li');
+      var link = document.createElement('a');
+
+      item.className = 'toc-' + heading.tagName.toLowerCase();
+      link.href = '#' + heading.id;
+      link.textContent = heading.childNodes[0] ? heading.childNodes[0].textContent : heading.textContent;
+
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+
+    toc.hidden = false;
+  })();
+</script>

@@ -1,0 +1,23 @@
+<header role="banner" class="site-header sticky top-0 backdrop-blur-sm">
+  <div class="md:container md:mx-auto flex flex-row justify-between py-4 mx-2">
+    <div class="sm:flex sm:flex-row sm:gap-10">
+      <a class="site-logo" href="/" aria-label="Robertito home">
+        Robertito<br> notes<span>.</span>
+      </a>
+    </div>
+    <div class="flex flex-col gap-2 sm:block">
+      <div class="flex flex-row my-auto h-full" role="navigation">
+        {% for item in site.data.navigation.links %}
+          <div class="px-1 sm:px-4 my-auto">
+            <a
+                href="{{ item.url }}"
+                class="site-nav-link py-1">
+              {{ item.title }}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</header>

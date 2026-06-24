@@ -1,0 +1,59 @@
+<section class="posts">
+  {% if include.title %}
+  <div class="posts-heading">
+    <h1>{{ include.title }}</h1>
+  </div>
+  {% endif %}
+  <ul class="post-list">
+    {% for post in include.posts %}
+      <li class="post-list-item">
+        <article class="post-card" data-url="{{ site.baseurl }}{{ post.url }}" role="link" tabindex="0" aria-label="Read {{ post.title | escape }}">
+          <aside class="post-card-meta">
+            {% capture tag %}{{ post.tags[0] }}{% endcapture %}
+            <div class="post-card-tag">
+              {% include tag.html tag=tag %}
+            </div>
+            <p>
+              {% include read_time.html read_time=post.read_time_in_minutes %}
+              &middot;
+              {% include time.html date=post.date %}
+            </p>
+          </aside>
+          <div class="post-card-body">
+            <h2>
+              <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a>
+            </h2>
+            <p class="post-card-excerpt">
+              {{ post.excerpt | strip_html }}
+            </p>
+            <div class="post-card-footer">
+              {% if post.author %}
+                {% include author.html author=post.author %}
+              {% endif %}
+            </div>
+          </div>
+        </article>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<script>
+  (function () {
+    var cards = document.querySelectorAll('.post-card[data-url]');
+
+    cards.forEach(function (card) {
+      card.addEventListener('click', function (event) {
+        if (event.target.closest('a')) return;
+        window.location.href = card.dataset.url;
+      });
+
+      card.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        if (event.target.closest('a')) return;
+        event.preventDefault();
+        window.location.href = card.dataset.url;
+      });
+    });
+  })();
+</script>

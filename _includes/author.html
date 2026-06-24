@@ -1,0 +1,5 @@
+{% assign author_name = include.author | replace: "Juan Manuel Ramallo", "Juanma" %}
+{% assign author_slug = author_name | slugify %}
+<a class="post-author post-author-{{ author_slug }}" href="{{ site.baseurl }}/author/{{ author_slug }}/">
+  <span>By {{ author_name }}</span>
+</a>

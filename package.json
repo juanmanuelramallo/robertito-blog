@@ -1,0 +1,29 @@
+{
+  "name": "robertito-blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "postcss.config.js",
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.4",
+    "tailwindcss": "^3.0.1"
+  },
+  "devDependencies": {
+    "postcss-cli": "^9.1.0"
+  },
+  "scripts": {
+    "dev": "postcss -w main.css -o assets/main.css",
+    "build": "postcss main.css -o assets/main.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juanmanuelramallo/robertito-blog.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/juanmanuelramallo/robertito-blog/issues"
+  },
+  "homepage": "https://github.com/juanmanuelramallo/robertito-blog#readme"
+}

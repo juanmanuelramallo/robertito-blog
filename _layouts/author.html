@@ -1,0 +1,69 @@
+---
+layout: default
+---
+
+{% assign posts = site.posts | where: "author", page.author %}
+{% assign author_profile = site.data.taxonomy.authors | where: "author", page.author | first %}
+{% assign display_author = author_profile.name | default: page.display_author %}
+
+<section class="author-profile" aria-labelledby="author-title">
+  <header class="author-hero">
+    <div class="author-hero-copy">
+      <p class="home-kicker">{{ author_profile.kicker | default: "Author" }}</p>
+      <h1 id="author-title">{{ display_author }}</h1>
+      {% if author_profile.tagline %}
+        <p class="author-tagline">{{ author_profile.tagline }}</p>
+      {% elsif author_profile.bio %}
+        <p class="author-tagline">{{ author_profile.bio }}</p>
+      {% endif %}
+      {% if author_profile.editorial_note %}
+        <p class="author-editorial-note">{{ author_profile.editorial_note }}</p>
+      {% endif %}
+    </div>
+    <div class="author-mark" aria-hidden="true">
+      <span>{{ author_profile.initials | default: display_author | slice: 0 }}</span>
+    </div>
+  </header>
+
+  {% if author_profile.featured_posts %}
+    <section class="author-section" aria-labelledby="author-featured-title">
+      <div class="author-section-heading">
+        <h2 id="author-featured-title">Start here</h2>
+        <p>Three pieces that explain the tone: practical, direct, and built from actual work.</p>
+      </div>
+      <div class="author-featured-grid">
+        {% for featured_slug in author_profile.featured_posts %}
+          {% assign featured_post = posts | where_exp: "post", "post.url contains featured_slug" | first %}
+          {% if featured_post %}
+            <a class="author-featured-card" href="{{ site.baseurl }}{{ featured_post.url }}">
+              <span>
+                {% if featured_post.tags[0] %}#{{ featured_post.tags[0] }}{% else %}Post{% endif %}
+              </span>
+              <strong>{{ featured_post.title }}</strong>
+              <em>{% include read_time.html read_time=featured_post.read_time_in_minutes %}</em>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if author_profile.topic_lanes %}
+    <section class="author-section" aria-labelledby="author-lanes-title">
+      <div class="author-section-heading">
+        <h2 id="author-lanes-title">Recurring lanes</h2>
+        <p>The useful map, because a pile of posts is not an editorial direction.</p>
+      </div>
+      <div class="author-lanes">
+        {% for lane in author_profile.topic_lanes %}
+          <a class="author-lane" href="{{ site.baseurl }}/tag/{{ lane.tag }}/">
+            <strong>{{ lane.title }}</strong>
+            <span>{{ lane.description }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+</section>
+
+{% include posts.html posts=posts title="Latest field notes" %}

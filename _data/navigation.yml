@@ -1,0 +1,9 @@
+links:
+- title: Articles
+  url: /
+- title: Topics
+  url: /tags/
+- title: About
+  url: /about/
+- title: RSS
+  url: /feed.xml
