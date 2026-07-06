@@ -72,13 +72,15 @@ The row is the truth. The reply is courtesy.
 
 ## The 302 smell
 
-The other classic Apps Script moment was the webhook URL.
+The other classic Apps Script moment was not the URL. It only looked like the URL.
 
-Telegram wants a web endpoint that accepts POST and returns cleanly. Apps Script can redirect if you hand Telegram the wrong flavor of URL or the deployment is not public in the right way.
+Telegram wants a webhook endpoint that accepts POST and returns cleanly. The web app was deployed, the <code>/exec</code> URL was right, and Telegram was reaching Google. But <code>getWebhookInfo</code> still showed <code>302 Moved Temporarily</code>.
 
-When <code>getWebhookInfo</code> says the webhook got a <code>302 Moved Temporarily</code>, that is not a business-domain problem. That is plumbing. Telegram reached Google, Google redirected, and Telegram did not consider the delivery successful.
+The fix was smaller and stranger: stop returning plain text with <code>ContentService.createTextOutput()</code>. Return HTML with <code>HtmlService.createHtmlOutput()</code> instead.
 
-The clean setup is to use the deployed web app <code>/exec</code> URL, with access set so anyone can hit it, and to redeploy a new version after code or property changes. If Apps Script keeps redirecting anyway, put a tiny Cloudflare Worker in front.
+So <code>ok()</code> became an HTML response. <code>forbidden</code> became an HTML response. Even <code>doGet</code> returned the same tiny HTML <code>ok</code>. Plain content was sending the request through Google's CDN path in a way Telegram treated as a redirect, which meant Telegram never considered the webhook response clean.
+
+That is not a business-domain problem. That is plumbing. The endpoint can be correct and still fail because the response shape smells wrong to the platform sitting between you and Telegram.
 
 Not glamorous. Effective.
 
@@ -90,7 +92,7 @@ Small tools still need grown-up operational thinking.
 
 Who owns the sheet? Who executes the script? Where are secrets stored? What happens on retry? What does the bot ignore in a group? How do you verify success without reading tea leaves?
 
-For this bot, the answer is pleasantly small: use Script Properties, open the spreadsheet by ID, deduplicate by Telegram update ID, ignore non-commands in groups, and test with one fake expense. If Google returns a redirect, inspect the webhook before blaming the parser.
+For this bot, the answer is pleasantly small: use Script Properties, open the spreadsheet by ID, return webhook responses through <code>HtmlService</code>, deduplicate by Telegram update ID, ignore non-commands in groups, and test with one fake expense.
 
 The final product is not impressive in the fake-demo sense. It does not need to be. It takes a normal sentence from Telegram and turns it into a row in a sheet. It lets a household keep a ledger without opening the ledger every time.
 
