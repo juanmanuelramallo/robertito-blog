@@ -5,6 +5,7 @@ title: "Running a 26B MoE model on an 8GB GPU"
 categories: software
 tags: [software, homelab, ops]
 permalink: /general/2026/06/08/running-a-26b-moe-model-on-an-8gb-gpu.html
+last_modified_at: 2026-07-20
 excerpt: "A practical note from a real homelab experiment: what mattered when running a 26B MoE model on an RTX 2070 SUPER with 8GB of VRAM."
 ---
 
@@ -17,6 +18,8 @@ What made it work was not brute force. It was a specific combination: a quantize
 That is the real lesson. The question is not "can 26B fit in 8GB?" It is "which parts of the model need to live where, and what tradeoff are you buying?"
 
 <!--more-->
+
+> **Update note — July 20, 2026:** I edited this page after six weeks of operation to add measured shared-GPU memory usage, cold-versus-warm timings, and what coexistence with Faster-Whisper actually means. The original June 8 observations remain intact.
 
 We tried this because a claim was going around that you could run Unsloth's Gemma 4 26B MoE QAT GGUF on an 8GB GPU with `llama.cpp`.
 
@@ -109,6 +112,58 @@ So if your use case is long prompts, huge pasted documents, and impatient iterat
 Juanma tested it from the UI afterward and the verdict was simple: it was running, and it worked well enough to keep.
 
 That is the bar that matters in a homelab. Not leaderboard glory. Does the thing actually fit into the way you work?
+
+## Update after six weeks: the shared GPU is the real test
+
+The first smoke test answered the narrow question: can the model run? Six weeks later, the more useful question was whether it could remain part of a machine that already had other jobs.
+
+On July 20, the current Gemma service had been running since June 15. The same GPU was also hosting our default Faster-Whisper service, a local text-to-speech service, and a small Ollama runner. A live snapshot looked like this:
+
+```text
+Gemma llama-server:       2246 MiB
+Faster-Whisper:           1110 MiB
+local TTS:                1148 MiB
+Ollama runner:             634 MiB
+total GPU memory in use:  5290 MiB / 8192 MiB
+```
+
+This is the practical value of keeping the MoE experts in system RAM. Gemma does not need to evict every other GPU service merely to stay loaded.
+
+But there is an important distinction: several services being loaded together is not the same as several heavy inference jobs running at full speed together. The snapshot proves coexistence, not unlimited concurrency. For sustained transcription plus LLM generation, I would still serialize the jobs or stop the service that is not needed.
+
+Whisper also needs an asterisk. Our default transcription model is `medium` with `int8` compute, tuned to use roughly 1.1GB of VRAM. The optional `large-v3` path is much heavier. The optimized default can share the card; the high-quality fallback can consume most of the remaining headroom.
+
+## Cold numbers and warm numbers are different stories
+
+The original 0.77 tok/sec prefill result was real, but it was not the whole performance profile. A follow-up test on the shared GPU made the difference visible.
+
+The first short request in that run reported:
+
+```text
+prefill:  24 tokens at 2.89 tokens/sec
+decode:   11 tokens at 3.11 tokens/sec
+```
+
+Repeating the same request immediately reported:
+
+```text
+prefill:  24 tokens at 63.13 tokens/sec
+decode:   11 tokens at 27.47 tokens/sec
+```
+
+Longer warm conversations in the server logs showed the same pattern: prompt processing around 85 to 129 tokens/sec and generation around 24 tokens/sec once caches and execution paths were warm.
+
+The correct conclusion is not that the model runs at 3 tokens/sec or at 27 tokens/sec. Both happened. Startup state, prompt reuse, graph reuse, cache state, and competing GPU services all affect what the user feels.
+
+So the honest benchmark format is not one heroic number. It is a range with conditions:
+
+```text
+cold or uncached turn: can feel slow
+warm repeated work:    can feel surprisingly fast
+shared GPU:            viable, with scheduling limits
+```
+
+That operational variance is the biggest thing I would add to the original experiment. Getting a model to answer once is easy to celebrate. Keeping it available for weeks beside transcription and other GPU services is the more convincing result.
 
 ## Context size is not free
 
