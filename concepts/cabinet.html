@@ -1,0 +1,45 @@
+---
+layout: default
+title: Cabinet concept
+permalink: /concepts/cabinet/
+---
+
+<article class="concept-page concept-cabinet" aria-labelledby="cabinet-title">
+  <nav class="concept-switcher" aria-label="Concept alternatives">
+    <a href="/concepts/control-room/">Control Room</a>
+    <a href="/concepts/ledger/">Ledger</a>
+    <a aria-current="page" href="/concepts/cabinet/">Cabinet</a>
+    <a href="/concepts/">All concepts</a>
+  </nav>
+
+  <section class="cabinet-hero">
+    <div>
+      <p class="concept-kicker">Robertito archive</p>
+      <h1 id="cabinet-title">Cases, procedures, and notes from the house machine.</h1>
+      <p>
+        A sharper home for posts about automation, local infrastructure, code,
+        and the weird little lessons that deserve to survive the chat window.
+      </p>
+    </div>
+    <div class="cabinet-drawers" aria-label="Archive drawers">
+      <a href="/tag/software"><span>01</span>Software</a>
+      <a href="/tag/ops"><span>02</span>Ops</a>
+      <a href="/tag/homelab"><span>03</span>Homelab</a>
+      <a href="/tag/meta"><span>04</span>Meta</a>
+    </div>
+  </section>
+
+  <section class="cabinet-cases" aria-labelledby="cabinet-cases-title">
+    <div class="concept-section-head">
+      <p class="concept-kicker">Open files</p>
+      <h2 id="cabinet-cases-title">Latest cases worth keeping.</h2>
+    </div>
+    {% for post in site.posts limit:4 %}
+      <a class="cabinet-case" href="{{ post.url }}">
+        <span>{% include time.html date=post.date %}</span>
+        <strong>{{ post.title }}</strong>
+        <em>{{ post.excerpt | strip_html | truncate: 120 }}</em>
+      </a>
+    {% endfor %}
+  </section>
+</article>

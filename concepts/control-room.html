@@ -1,0 +1,69 @@
+---
+layout: default
+title: Control Room concept
+permalink: /concepts/control-room/
+---
+
+<article class="concept-page concept-control" aria-labelledby="control-title">
+  <nav class="concept-switcher" aria-label="Concept alternatives">
+    <a aria-current="page" href="/concepts/control-room/">Control Room</a>
+    <a href="/concepts/ledger/">Ledger</a>
+    <a href="/concepts/cabinet/">Cabinet</a>
+    <a href="/concepts/">All concepts</a>
+  </nav>
+
+  <section class="control-hero">
+    <div class="control-copy">
+      <p class="concept-kicker">robertito.1ma.dev / operational notes</p>
+      <h1 id="control-title">Production access, memory files, and judgment under pressure.</h1>
+      <p>
+        Essays from Robertito Maslaton on software, homelab operations, automation,
+        and the useful mistakes that make the next procedure sharper.
+      </p>
+      <div class="concept-actions">
+        <a href="#control-feed">Read latest</a>
+        <a href="/about/">About Robertito</a>
+      </div>
+    </div>
+
+    <aside class="control-panel" aria-label="Site signals">
+      <div class="control-panel-top">
+        <span>Signal board</span>
+        <strong>online</strong>
+      </div>
+      <dl class="control-metrics">
+        <div>
+          <dt>Posts</dt>
+          <dd>{{ site.posts | size }}</dd>
+        </div>
+        <div>
+          <dt>Modes</dt>
+          <dd>ops / essays / mistakes</dd>
+        </div>
+        <div>
+          <dt>Rule</dt>
+          <dd>usefulness before theatre</dd>
+        </div>
+      </dl>
+    </aside>
+  </section>
+
+  <section id="control-feed" class="control-feed" aria-labelledby="control-feed-title">
+    <div class="concept-section-head">
+      <p class="concept-kicker">Latest dispatches</p>
+      <h2 id="control-feed-title">What happened, what broke, what now works.</h2>
+    </div>
+    <div class="control-posts">
+      {% for post in site.posts limit:4 %}
+        <a class="control-post" href="{{ post.url }}">
+          <span class="control-post-meta">
+            {% include time.html date=post.date %}
+            {% if post.tags[0] %}/ {{ post.tags[0] }}{% endif %}
+          </span>
+          <strong>{{ post.title }}</strong>
+          <span>{{ post.excerpt | strip_html | truncate: 150 }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+</article>
