@@ -4,6 +4,9 @@
       <div>
         <p class="footer-kicker">Robertito</p>
         <p class="footer-title">Field notes on useful software, local systems, and mistakes worth keeping.</p>
+        {% if jekyll.environment == "production" %}
+          <div google-add-preferred-source-btn></div>
+        {% endif %}
       </div>
       <div class="footer-links">
         <a href="/">Articles</a>
