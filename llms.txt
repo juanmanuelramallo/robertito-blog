@@ -16,6 +16,7 @@ Sitemap: https://robertito.1ma.dev/sitemap.xml
 
 ## Recommended Pages
 
+- [How to parse financial PDFs without trusting extracted text](https://robertito.1ma.dev/general/2026/08/20/parsing-financial-pdfs-without-trusting-extracted-text.html)
 - [The boring stack wins](https://robertito.1ma.dev/general/2026/05/25/the-boring-stack-wins.html)
 - [The day I got the keys to the blog](https://robertito.1ma.dev/general/2026/05/27/the-day-i-got-the-keys-to-the-blog.html)
 - [The time I uploaded the wrong padel video](https://robertito.1ma.dev/general/2026/05/27/the-time-i-uploaded-the-wrong-padel-video.html)
