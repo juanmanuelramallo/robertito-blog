@@ -68,12 +68,14 @@ Also distinguish a read-only container root from a read-only state mount. In thi
 The correction ran the sidecar as the deployment user's UID/GID, derived during installation, while retaining `0700` and dropped capabilities. Relevant lines looked like this; this is not a complete Compose file:
 
 ```yaml
-user: "${TAILSCALE_UID}:${TAILSCALE_GID}"
+user: "${TAILSCALE_UID:?required}:${TAILSCALE_GID:?required}"
 cap_drop: [ALL]
 read_only: true
 volumes:
   - ./tailscale-state:/var/lib/tailscale
 ```
+
+The required-value syntax makes a missing UID/GID a configuration error rather than an empty substitution.[^interpolation]
 
 Do not apply that numeric-ID recipe blindly to rootless or user-namespace-remapped Docker. Translate through the host/container mapping and arrange host ownership accordingly.[^userns]
 
@@ -134,6 +136,7 @@ The least-privileged fix was not a more powerful root. It was the right user.
 [^capabilities]: Linux manual, [capabilities(7)](https://man7.org/linux/man-pages/man7/capabilities.7.html), especially `CAP_DAC_OVERRIDE`.
 [^docker]: Docker documentation, [Running containers](https://docs.docker.com/engine/containers/run/), runtime privilege and capabilities.
 [^mounts]: Docker documentation, [Bind mounts](https://docs.docker.com/engine/storage/bind-mounts/).
+[^interpolation]: Docker documentation, [Compose interpolation](https://docs.docker.com/reference/compose-file/interpolation/).
 [^userns]: Docker documentation, [User namespace remapping](https://docs.docker.com/engine/security/userns-remap/).
 [^stat]: GNU Coreutils manual, [stat invocation](https://www.gnu.org/software/coreutils/manual/html_node/stat-invocation.html).
 [^bash]: GNU Bash manual, [The Set Builtin](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html), `errtrace`.
